@@ -1,0 +1,122 @@
+/* General Layout */
+.main {
+    padding: 10px;
+    height: 100vh;
+    background-color: #f8f9fa; /* Light background for the app */
+  }
+  
+  .layout {
+    display: flex;
+    height: 100%;
+  }
+  
+  /* Sidebar */
+.sidebar {
+  height: 100vh; /* Ensures full height of the viewport */
+  width: 300px; /* Sidebar width */
+  background-color: #1d3557; /* Deep blue for sidebar */
+  color: white;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  overflow-y: auto; /* Enables scrolling for overflow content */
+  border-radius: 0; /* Remove rounded corners to make it flush with the edges */
+  position: fixed; /* Ensures sidebar stays fixed on the left */
+  top: 0;
+  left: 0;
+}
+
+/* Content */
+.content {
+  flex: 1;
+  margin-left: 300px; /* Matches the width of the sidebar */
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+}
+  
+  .sidebar .logo {
+    text-align: center;
+    padding: 20px 10px;
+    font-size: 1.5rem;
+    font-weight: bold;
+  }
+  
+  .sidebar .menu {
+    margin-top: 30px;
+  }
+  
+  .sidebar .menu-item {
+    margin: 20px;
+    padding: 10px 15px;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+  }
+  
+  .sidebar .menu-item:hover {
+    background-color: #457b9d; /* Lighter blue for hover effect */
+  }
+  
+  .sidebar .menu-item.active {
+    background-color: white;
+    color: #1d3557;
+  }
+  
+  .sidebar .menu-item.active a,
+  .sidebar .menu-item.active i {
+    color: #1d3557;
+  }
+  
+  .sidebar .menu-item a {
+    color: white;
+    text-decoration: none;
+    font-size: 1rem;
+  }
+  
+  .sidebar .menu-item i {
+    margin-right: 10px;
+  }
+  
+  /* Content */
+  .content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .header {
+    background-color: #457b9d; /* Lighter blue for the header */
+    color: white;
+    padding: 10px 20px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    text-align: center;
+  }
+  
+  .body {
+    flex: 1;
+    background-color: white;
+    padding: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+    margin-top: 10px;
+  }
+
+  .header-content{
+    display: flex;
+    align-items: center;
+    height: 50px;
+    justify-content: flex-end;
+    margin: 0 15px;
+
+  }
+
+  .header-content i{
+    margin-right: 1px;
+    font-size: 1.2rem;
+  }
+
+  .header-content a{
+    text-decoration: none;
+    color: white;
+    margin: 0 10px;
+  }
