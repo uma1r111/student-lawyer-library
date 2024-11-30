@@ -5,7 +5,7 @@ const jwt = require('jsonwebtoken')
 // Register Controller
 const registerController = async (req, res) => {
     try {
-        const { email, password, name, userType } = req.body;
+        const { email, password, name, userType, specialization, experienceYears, educationalInstitute } = req.body;
 
         // Check if user already exists
         const existingUser = await userModel.getUserByEmail(email);
@@ -25,7 +25,42 @@ const registerController = async (req, res) => {
         const finalUserType = userType && validUserTypes.includes(userType) ? userType : defaultUserType;
 
         // Create a new user
-        await userModel.createUser(name, email, hashedPassword, finalUserType);
+        const newUserId = await userModel.createUser(name, email, hashedPassword, finalUserType);
+
+        // Add specialization and experience for Lawyer
+        if (finalUserType === 'Lawyer') {
+            // Validate specialization and experience
+            if (!specialization || specialization.trim() === '') {
+                return res.status(400).send({
+                    success: false,
+                    message: 'Specialization is required for Lawyers',
+                });
+            }
+
+            if (!experienceYears || isNaN(experienceYears) || experienceYears < 0) {
+                return res.status(400).send({
+                    success: false,
+                    message: 'Valid experience years are required for Lawyers',
+                });
+            }
+
+            // Add lawyer-specific data
+            await userModel.createLawyer(newUserId, specialization, experienceYears);
+        }
+
+        // Add educational institute for LawStudent
+        if (finalUserType === 'LawStudent') {
+            // Validate educational institute
+            if (!educationalInstitute || educationalInstitute.trim() === '') {
+                return res.status(400).send({
+                    success: false,
+                    message: 'Educational institute is required for Law Students',
+                });
+            }
+
+            // Add law student-specific data
+            await userModel.createLawStudent(newUserId, educationalInstitute);
+        }
 
         res.status(201).send({ message: 'Registered successfully', success: true });
     } catch (error) {
@@ -36,6 +71,7 @@ const registerController = async (req, res) => {
         });
     }
 };
+
 
 // Login Controller for OracleDB
 const loginController = async (req, res) => {

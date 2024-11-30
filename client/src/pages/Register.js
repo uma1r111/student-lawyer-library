@@ -1,20 +1,23 @@
-import React from 'react';
+import React, { useState } from 'react';
 import '../styles/RegisterStyles.css';
-import { Form, Input, Select, message } from 'antd';
+import { Form, Input, Select, InputNumber, message } from 'antd';
 import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { showLoading, hideLoading } from '../redux/features/alertSlice';
+
 const Register = () => {
   const { Option } = Select;
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const [userType, setUserType] = useState(''); // Track selected UserType
+
   // Form handler
   const onfinishHandler = async (values) => {
     try {
-      dispatch(showLoading())
+      dispatch(showLoading());
       const res = await axios.post('/api/users/register', values);
-      dispatch(hideLoading())
+      dispatch(hideLoading());
       if (res.data.success) {
         message.success('Registered Successfully');
         navigate('/login');
@@ -67,18 +70,78 @@ const Register = () => {
             <Input.Password />
           </Form.Item>
 
-          {/* UserType Dropdown (Restricted to Lawyer and LawStudent) */}
+          {/* UserType Dropdown */}
           <Form.Item
             label="User Type"
             name="userType"
             rules={[{ required: true, message: 'Please select a user type' }]}
           >
-            <Select placeholder="Select a role">
+            <Select
+              placeholder="Select a role"
+              onChange={(value) => setUserType(value)} // Update userType
+            >
               <Option value="Lawyer">Lawyer</Option>
               <Option value="LawStudent">Law Student</Option>
             </Select>
           </Form.Item>
 
+          {/* Additional Fields for Lawyers and Law Students */}
+          <Form.Item noStyle shouldUpdate={(prevValues, currentValues) => prevValues.userType !== currentValues.userType}>
+            {({ getFieldValue }) => {
+              const userType = getFieldValue('userType');
+
+              if (userType === 'Lawyer') {
+                return (
+                  <>
+                    {/* Specialization Field */}
+                    <Form.Item
+                      label="Specialization"
+                      name="specialization"
+                      rules={[{ required: true, message: 'Please enter your specialization' }]}
+                    >
+                      <Input type="text" />
+                    </Form.Item>
+
+                    {/* Years of Experience Field */}
+                    <Form.Item
+                      label="Years of Experience"
+                      name="experienceYears"
+                      rules={[
+                        { required: true, message: 'Please enter your years of experience' },
+                        {
+                          type: 'number',
+                          min: 0,
+                          max: 100,
+                          message: 'Experience must be a valid number between 0 and 100',
+                        },
+                      ]}
+                    >
+                      <InputNumber style={{ width: '100%' }} placeholder="Enter years of experience" />
+                    </Form.Item>
+                  </>
+                );
+              }
+
+              if (userType === 'LawStudent') {
+                return (
+                  <>
+                    {/* Educational Institute */}
+                    <Form.Item
+                      label="Educational Institute"
+                      name="educationalInstitute"
+                      rules={[
+                        { required: true, message: 'Please enter your educational institute' },
+                      ]}
+                    >
+                      <Input placeholder="Enter your educational institute" />
+                    </Form.Item>
+                  </>
+                );
+              }
+
+              return null; // Render nothing if no specific userType is selected
+            }}
+          </Form.Item>
           {/* Already Registered? */}
           <p className="mt-3">
             Already have an account?{' '}
