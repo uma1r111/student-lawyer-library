@@ -6,19 +6,24 @@ import Register from './pages/Register';
 import Dashboard from './pages/dashboard';
 import AddCase from './pages/addCase';
 import AdminDashboard from './pages/adminDashboard';
-import Bookmark from './pages/bookmark';
+import Bookmarks from './pages/bookmark';
 import CaseDetails from './pages/caseDetails';
 import EditCase from './pages/editCase';
 import Error404 from './pages/error404';
-import SearchResults from './pages/searchResults';
+import SearchCases from './pages/SearchCases'; // Match the exact file name
 import { useSelector } from 'react-redux';
 import Spinner from './components/Spinner';
 import ProtectedRoute from './components/ProtectedRoutes';
 import PublicRoute from './components/PublicRoutes';
 import RequestCase from './pages/requestCase';
+import MyCases from './pages/MyCases'; // Import MyCases component
+import Profile from "./pages/Profile";
+import Notifications from './pages/Notifications';
+
 
 function App() {
-  const { loading } = useSelector(state => state.alerts)
+  const { loading } = useSelector((state) => state.alerts);
+
   return (
     <>
       <BrowserRouter>
@@ -26,43 +31,55 @@ function App() {
           <Spinner />
         ) : (
           <Routes>
-
             {/* Public Routes */}
-            <Route path="/"
+            <Route
+              path="/"
               element={
                 <ProtectedRoute>
                   <HomePage />
                 </ProtectedRoute>
-              } />
+              }
+            />
 
-            <Route path="/login"
+            <Route
+              path="/login"
               element={
                 <PublicRoute>
                   <Login />
                 </PublicRoute>
-              } />
+              }
+            />
 
-            <Route path="/register"
+            <Route
+              path="/register"
               element={
                 <PublicRoute>
                   <Register />
                 </PublicRoute>
-              } />
-
-            {/* User-Specific Routes */}
-            <Route
-              path="/dashboard"
-              element={
-                <ProtectedRoute>
-                  <Dashboard />
-                </ProtectedRoute>
               }
             />
+
+            {/* User-Specific Routes */}
+            <Route path="/" element={<HomePage />} />
+
             <Route
-              path="/bookmark"
+              path="/profile"
               element={
                 <ProtectedRoute>
-                  <Bookmark />
+                  <Profile />
+                </ProtectedRoute>
+              }
+
+            />
+
+
+
+
+            <Route
+              path="/view-bookmarks"
+              element={
+                <ProtectedRoute>
+                  <Bookmarks />
                 </ProtectedRoute>
               }
             />
@@ -74,14 +91,17 @@ function App() {
                 </ProtectedRoute>
               }
             />
+
+            {/* Search Cases Route */}
             <Route
-              path="/search"
+              path="/search-cases" // Updated to match the intended route
               element={
                 <ProtectedRoute>
-                  <SearchResults />
+                  <SearchCases />
                 </ProtectedRoute>
               }
             />
+
             <Route
               path="/request-case"
               element={
@@ -89,8 +109,27 @@ function App() {
                   <RequestCase />
                 </ProtectedRoute>
               }
-              />
-              {/* Admin-Specific Routes */}
+            />
+
+            {/* Lawyer-Specific Route */}
+            <Route
+              path="/my-cases"
+              element={
+                <ProtectedRoute>
+                  <MyCases />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/notification"
+              element={
+                <ProtectedRoute>
+                  <Notifications />
+                </ProtectedRoute>
+              }
+            />
+
+            {/* Admin-Specific Routes */}
             <Route
               path="/admin"
               element={
@@ -99,14 +138,17 @@ function App() {
                 </ProtectedRoute>
               }
             />
+
+            {/* Add Case Route */}
             <Route
-              path="/add-case/:id"
+              path="/add-case"
               element={
                 <ProtectedRoute>
                   <AddCase />
                 </ProtectedRoute>
               }
             />
+
             <Route
               path="/edit-case/:id"
               element={
@@ -120,8 +162,6 @@ function App() {
             <Route path="*" element={<Error404 />} />
           </Routes>
         )}
-
-
       </BrowserRouter>
     </>
   );

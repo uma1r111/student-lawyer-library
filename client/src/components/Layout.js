@@ -12,75 +12,90 @@ const Layout = ({ children }) => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  // Load user from localStorage if Redux state is empty
   useEffect(() => {
     if (!user) {
       const storedUser = localStorage.getItem("user");
       if (storedUser) {
-        dispatch(setUser(JSON.parse(storedUser))); // Sync Redux with localStorage
+        dispatch(setUser(JSON.parse(storedUser)));
       }
     }
   }, [user, dispatch]);
 
- // Logout function
- const handleLogout = () => {
-  localStorage.clear();
-  dispatch(setUser(null)); // Clear Redux state
-  message.success("Logged Out Successfully");
-  navigate("/login");
-};
+  const handleLogout = () => {
+    localStorage.clear();
+    dispatch(setUser(null));
+    message.success("Logged Out Successfully");
+    navigate("/login");
+  };
 
-  // Determine SidebarMenu based on userType
   const SidebarMenu =
-    user?.userType === "Lawyer" ? lawyerMenu : user?.userType === "LawStudent" ? studentMenu : [];
+    user?.userType === "Lawyer"
+      ? lawyerMenu
+      : user?.userType === "LawStudent"
+      ? studentMenu
+      : [];
 
   if (!SidebarMenu.length) {
     return (
-      <div>
-        Invalid user type. Please log out and log in again.
-        <button onClick={handleLogout}>Logout</button>
+      <div className="error-container">
+        <h2>Invalid user type</h2>
+        <p>Please log out and log in again.</p>
+        <button onClick={handleLogout} className="btn-logout">
+          Logout
+        </button>
       </div>
     );
   }
 
   return (
-    <div className="main">
-      <div className="layout">
-        {/* Sidebar */}
-        <div className="sidebar">
-          <div className="logo">
-            <h6>Lawyer Case App</h6>
-            <hr />
-          </div>
-          <div className="menu">
-            {SidebarMenu.map((menu, index) => {
-              const isActive = location.pathname === menu.path;
-              return (
-                <div key={index} className={`menu-item ${isActive && "active"}`}>
-                  <i className={menu.icon}></i>
-                  <Link to={menu.path}>{menu.name}</Link>
-                </div>
-              );
-            })}
-            <div className="menu-item" onClick={handleLogout}>
-              <i className="fa-solid fa-right-from-bracket"></i>
-              Logout
-            </div>
-          </div>
+    <div className="main-layout">
+      {/* Sidebar */}
+      <aside className="sidebar">
+        <div className="logo">
+          <h1 className="app-logo">CaseSphere</h1>
+          <hr />
         </div>
+        <div className="menu">
+          {SidebarMenu.map((menu, index) => {
+            const isActive = location.pathname === menu.path;
+            return (
+              <div key={index} className={`menu-item ${isActive && "active"}`}>
+                <i className={menu.icon}></i>
+                <Link to={menu.path}>{menu.name}</Link>
+              </div>
+            );
+          })}
 
-        {/* Content */}
-        <div className="content">
-          <div className="header">
-            <div className="header-content">
-              <i className="fa-solid fa-bell"></i>
-              <Link to="/profile">{user?.name || "Profile"}</Link>
-            </div>
-            <h3>{user?.userType || "Dashboard"} Dashboard</h3>
+          {/* Profile Link
+          <div className={`menu-item ${location.pathname === "/profile" && "active"}`}>
+            <i className="fa-solid fa-user"></i>
+            <Link to="/profile">Profile</Link>
+          </div> */}
+
+          {/* Logout Button */}
+          <div className="menu-item" onClick={handleLogout}>
+            <i className="fa-solid fa-right-from-bracket"></i>
+            Logout
           </div>
-          <div className="body">{children}</div>
         </div>
-      </div>
+      </aside>
+
+      {/* Content Area */}
+      <main className="content">
+        <header className="header">
+          <h3>
+            {user?.userType === "LawStudent"
+              ? "Student Dashboard"
+              : user?.userType === "Lawyer"
+              ? "Lawyer Dashboard"
+              : user?.userType === "Admin"
+              ? "Admin Dashboard"
+              : "Dashboard"}
+          </h3>
+        </header>
+
+        <section className="body">{children}</section>
+      </main>
     </div>
   );
 };
